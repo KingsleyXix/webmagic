@@ -97,6 +97,8 @@ public class Spider implements Runnable, Task {
 
     protected boolean destroyWhenExit = true;
 
+    private RequestHandler requestHandler = new RequestHandler();
+
     private List<SpiderListener> spiderListeners;
 
     private final AtomicLong pageCount = new AtomicLong(0);
