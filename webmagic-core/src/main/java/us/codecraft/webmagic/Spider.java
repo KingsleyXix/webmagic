@@ -63,7 +63,7 @@ public class Spider implements Runnable, Task {
 
     protected Downloader downloader;
 
-    protected List<Pipeline> pipelines = new ArrayList<>();
+    protected List<Pipeline> pipelines = new ArrayList<Pipeline>();
 
     protected PageProcessor pageProcessor;
 
