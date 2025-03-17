@@ -342,7 +342,7 @@ public class Spider implements Runnable, Task {
                 @Override
                 public void run() {
                     try {
-                        processRequest(request);
+                        requestHandler.processRequest(request, this);;
                         onSuccess(request);
                     } catch (Exception e) {
                         onError(request, e);
