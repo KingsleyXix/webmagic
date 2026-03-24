@@ -13,6 +13,12 @@ public class PipelineManager {
         this.pipelines = pipelines;
     }
 
+    public void process(ResultItems resultItems, Task task) {
+        for (Pipeline pipeline : pipelines) {
+            pipeline.process(resultItems, task);
+        }
+    }
+
 }
 
 
