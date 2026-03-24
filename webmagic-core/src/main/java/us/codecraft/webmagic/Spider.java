@@ -429,61 +429,9 @@ public class Spider implements Runnable, Task {
         initComponent();
         if (urls.length > 0) {
             for (String url : urls) {
-                processRequest(new Request(url));
+                requestHandler.processRequest(new Request(url), this);
             }
         }
-    }
-
-    private void processRequest(Request request) {
-        Page page;
-        if (null != request.getDownloader()){
-            page = request.getDownloader().download(request,this);
-        }else {
-            page = downloader.download(request, this);
-        }
-        if (page.isDownloadSuccess()){
-            onDownloadSuccess(request, page);
-        } else {
-            onDownloaderFail(request);
-        }
-    }
-
-    private void onDownloadSuccess(Request request, Page page) {
-        if (site.getAcceptStatCode().contains(page.getStatusCode())){
-            pageProcessor.process(page);
-            extractAndAddRequests(page, spawnUrl);
-            if (!page.getResultItems().isSkip()) {
-                for (Pipeline pipeline : pipelines) {
-                    pipeline.process(page.getResultItems(), this);
-                }
-            }
-        } else {
-            logger.info("page status code error, page {} , code: {}", request.getUrl(), page.getStatusCode());
-        }
-        sleep(site.getSleepTime());
-    }
-
-    private void onDownloaderFail(Request request) {
-        if (site.getCycleRetryTimes() == 0) {
-            sleep(site.getSleepTime());
-        } else {
-            // for cycle retry
-            doCycleRetry(request);
-        }
-    }
-
-    private void doCycleRetry(Request request) {
-        Object cycleTriedTimesObject = request.getExtra(Request.CYCLE_TRIED_TIMES);
-        if (cycleTriedTimesObject == null) {
-            addRequest(SerializationUtils.clone(request).setPriority(0).putExtra(Request.CYCLE_TRIED_TIMES, 1));
-        } else {
-            int cycleTriedTimes = (Integer) cycleTriedTimesObject;
-            cycleTriedTimes++;
-            if (cycleTriedTimes < site.getCycleRetryTimes()) {
-                addRequest(SerializationUtils.clone(request).setPriority(0).putExtra(Request.CYCLE_TRIED_TIMES, cycleTriedTimes));
-            }
-        }
-        sleep(site.getRetrySleepTime());
     }
 
     protected void sleep(int time) {
@@ -758,6 +706,22 @@ public class Spider implements Runnable, Task {
 
     public List<SpiderListener> getSpiderListeners() {
         return spiderListeners;
+    }
+
+    public List<Pipeline> getPipelines() {
+        return pipelines;
+    }
+
+    public PageProcessor getPageProcessor() {
+        return pageProcessor;
+    }
+
+    public Downloader getDownloader() {
+        return downloader;
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 
     public Spider setSpiderListeners(List<SpiderListener> spiderListeners) {
