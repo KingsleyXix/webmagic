@@ -342,7 +342,8 @@ public class Spider implements Runnable, Task {
                 @Override
                 public void run() {
                     try {
-                        requestHandler.processRequest(request, this);;
+                        // Spider attributes this responsability to RequesHandler via this :
+                        requestHandler.processRequest(request, Spider.this);
                         onSuccess(request);
                     } catch (Exception e) {
                         onError(request, e);
