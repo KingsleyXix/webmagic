@@ -29,9 +29,8 @@ public class RequestHandler {
                 spider.extractAndAddRequests(page, spider.isSpawnUrl());
 
                 if (!page.getResultItems().isSkip()) {
-                    for (Pipeline pipeline : spider.getPipelines()) {
-                        pipeline.process(page.getResultItems(), spider);
-                    }
+                    PipelineManager pipelineManager = new PipelineManager(spider.getPipelines());
+                    pipelineManager.process(page.getResultItems(), spider);
                 }
 
             } else {
