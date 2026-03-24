@@ -1,8 +1,5 @@
 package us.codecraft.webmagic;
 
-import us.codecraft.webmagic.pipeline.Pipeline;
-import us.codecraft.webmagic.ResultItems;
-
 public class RequestHandler {
 
 
