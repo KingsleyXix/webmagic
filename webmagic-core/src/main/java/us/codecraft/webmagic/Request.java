@@ -26,6 +26,7 @@ public class Request implements Serializable {
 
     private String method;
 
+    // Mark Downloader as transcient to ensure proper serialization
     private HttpRequestBody requestBody;
 
     /**
@@ -36,7 +37,9 @@ public class Request implements Serializable {
     /**
      * Store additional information in extras.
      */
-    private Map<String, Object> extras = new HashMap<>();
+
+    // serialization problem fixed by adding transient to avoid errors
+    private transient Map<String, Object> extras = new HashMap<>();
 
     /**
      * cookies for current url, if not set use Site's cookies
