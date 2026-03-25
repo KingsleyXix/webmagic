@@ -305,7 +305,10 @@ public class Spider implements Runnable, Task {
         initComponent();
         logger.info("Spider {} started!", getUUID());
         // interrupt won't be necessarily detected
-        while (!Thread.currentThread().isInterrupted() && stat.get() == STAT_RUNNING) {
+
+        //while (!Thread.currentThread().isInterrupted() && stat.get() == STAT_RUNNING) {
+
+        while (isRunning()){
             Request poll = scheduler.poll(this);
             if (poll == null) {
                 if (threadPool.getThreadAlive() == 0) {
@@ -676,6 +679,11 @@ public class Spider implements Runnable, Task {
      */
     public Status getStatus() {
         return Status.fromValue(stat.get());
+    }
+
+    private boolean isRunning() {
+        return !Thread.currentThread().isInterrupted()
+                && stat.get() == STAT_RUNNING;
     }
 
 
