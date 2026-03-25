@@ -105,6 +105,38 @@ public class Spider implements Runnable, Task {
 
     private long emptySleepTime = 30000;
 
+    private Request getNextRequest(){
+        Request poll = scheduler.poll(this);
+
+        if (poll == null) {
+            if (threadPool.getThreadAlive() == 0) {
+                //no alive thread anymore , try again
+                poll = scheduler.poll(this);
+                if (poll == null) {
+                    if (exitWhenComplete) {
+                        break;
+                    } else {
+                        // wait
+                        try {
+                            Thread.sleep(emptySleepTime);
+                            continue;
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            break;
+                        }
+                    }
+                }
+            } else {
+                // wait until new url added，
+                if (scheduler.waitNewUrl(threadPool, emptySleepTime)) {
+                    // if interrupted
+                    break;
+                }
+                continue;
+            }
+        }
+    }
+
     /**
      * create a spider with pageProcessor.
      *
@@ -309,33 +341,9 @@ public class Spider implements Runnable, Task {
         //while (!Thread.currentThread().isInterrupted() && stat.get() == STAT_RUNNING) {
 
         while (isRunning()){
-            Request poll = scheduler.poll(this);
-            if (poll == null) {
-                if (threadPool.getThreadAlive() == 0) {
-                    //no alive thread anymore , try again
-                    poll = scheduler.poll(this);
-                    if (poll == null) {
-                        if (exitWhenComplete) {
-                            break;
-                        } else {
-                            // wait
-                            try {
-                                Thread.sleep(emptySleepTime);
-                                continue;
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    // wait until new url added，
-                    if (scheduler.waitNewUrl(threadPool, emptySleepTime)) {
-                        // if interrupted
-                        break;
-                    }
-                    continue;
-                }
+            Request request = getNextRequest();
+            if(request == null){
+                continue;
             }
             final Request request = poll;
             //this may swallow the interruption
@@ -484,6 +492,14 @@ public class Spider implements Runnable, Task {
             }
         }
         sleep(site.getRetrySleepTime());
+    }
+
+    private void sleepQuietly() {
+        try {
+            Thread.sleep(emptySleepTime);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     protected void sleep(int time) {
