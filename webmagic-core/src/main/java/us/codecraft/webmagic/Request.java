@@ -31,7 +31,7 @@ public class Request implements Serializable {
     /**
      * this req use this downloader
      */
-    private Downloader downloader;
+    private transient Downloader downloader;
 
     /**
      * Store additional information in extras.
