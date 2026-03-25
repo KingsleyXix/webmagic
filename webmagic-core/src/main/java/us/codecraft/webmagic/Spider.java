@@ -114,27 +114,21 @@ public class Spider implements Runnable, Task {
                 poll = scheduler.poll(this);
                 if (poll == null) {
                     if (exitWhenComplete) {
-                        break;
+                        return null;
                     } else {
-                        // wait
-                        try {
-                            Thread.sleep(emptySleepTime);
-                            continue;
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            break;
-                        }
+                        sleepQuietly();
+                        return null;
                     }
                 }
             } else {
-                // wait until new url added，
-                if (scheduler.waitNewUrl(threadPool, emptySleepTime)) {
+                if(scheduler.waitNewUrl(threadPool, emptySleepTime)) {
                     // if interrupted
-                    break;
+                    return null;
                 }
-                continue;
+                return null;
             }
         }
+        return poll;
     }
 
     /**
@@ -342,26 +336,14 @@ public class Spider implements Runnable, Task {
 
         while (isRunning()){
             Request request = getNextRequest();
+
             if(request == null){
                 continue;
             }
-            final Request request = poll;
             //this may swallow the interruption
-            threadPool.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        processRequest(request);
-                        onSuccess(request);
-                    } catch (Exception e) {
-                        onError(request, e);
-                        logger.error("process request " + request + " error", e);
-                    } finally {
-                        pageCount.incrementAndGet();
-                        scheduler.signalNewUrl();
-                    }
-                }
-            });
+
+            handleRequest(request);
+
         }
         stat.set(STAT_STOPPED);
         // release some resources
@@ -524,6 +506,21 @@ public class Spider implements Runnable, Task {
             site.setDomain(UrlUtils.getDomain(request.getUrl()));
         }
         scheduler.push(request, this);
+    }
+
+    private void handleRequest(Request request) {
+        threadPool.execute(() -> {
+            try {
+                processRequest(request);
+                onSuccess(request);
+            } catch (Exception e) {
+                onError(request, e);
+                logger.error("process request " + request + " error", e);
+            } finally {
+                pageCount.incrementAndGet();
+                scheduler.signalNewUrl();
+            }
+        });
     }
 
     protected void checkIfRunning() {
