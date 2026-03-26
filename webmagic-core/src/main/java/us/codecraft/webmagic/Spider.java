@@ -340,17 +340,12 @@ public class Spider implements Runnable, Task {
             if(request == null){
                 continue;
             }
-            //this may swallow the interruption
 
             handleRequest(request);
 
         }
-        stat.set(STAT_STOPPED);
-        // release some resources
-        if (destroyWhenExit) {
-            close();
-        }
-        logger.info("Spider {} closed! {} pages downloaded.", getUUID(), pageCount.get());
+
+        shutdown();
     }
 
     /**
@@ -408,6 +403,16 @@ public class Spider implements Runnable, Task {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void shutdown() {
+        stat.set(STAT_STOPPED);
+
+        if (destroyWhenExit) {
+            close();
+        }
+
+        logger.info("Spider {} closed! {} pages downloaded.", getUUID(), pageCount.get());
     }
 
     /**
