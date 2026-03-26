@@ -27,12 +27,9 @@ public class SmartContentSelector implements Selector {
 
     @Override
     public String select(String html) {
-        html = html.replaceAll("(?is)<!DOCTYPE.*?>", "");
-        html = html.replaceAll("(?is)<!--.*?-->", "");				// remove html comment
-        html = html.replaceAll("(?is)<script.*?>.*?</script>", ""); // remove javascript
-        html = html.replaceAll("(?is)<style.*?>.*?</style>", "");   // remove css
-        html = html.replaceAll("&.{2,5};|&#.{2,5};", " ");			// remove special char
-        html = html.replaceAll("(?is)<.*?>", "");
+
+        html = cleanHtml(html);
+
         List<String> lines;
         int blocksWidth =3;
         int start;
@@ -89,6 +86,15 @@ public class SmartContentSelector implements Selector {
         return text.toString();
     }
 
+    private String cleanHtml(String html){
+        html = html.replaceAll("(?is)<!DOCTYPE.*?>", "");
+        html = html.replaceAll("(?is)<!--.*?-->", "");				// remove html comment
+        html = html.replaceAll("(?is)<script.*?>.*?</script>", ""); // remove javascript
+        html = html.replaceAll("(?is)<style.*?>.*?</style>", "");   // remove css
+        html = html.replaceAll("&.{2,5};|&#.{2,5};", " ");			// remove special char
+        html = html.replaceAll("(?is)<.*?>", "");
+        return html;
+    }
     @Override
     public List<String> selectList(String text) {
         throw new UnsupportedOperationException();
