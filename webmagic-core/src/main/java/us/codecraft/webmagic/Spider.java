@@ -106,13 +106,12 @@ public class Spider implements Runnable, Task {
     private long emptySleepTime = 30000;
 
     private Request getNextRequest(){
-        Request poll = scheduler.poll(this);
+        Request request = scheduler.request(this);
 
-        if (poll == null) {
+        if (request == null) {
             if (threadPool.getThreadAlive() == 0) {
-                //no alive thread anymore , try again
-                poll = scheduler.poll(this);
-                if (poll == null) {
+                request = scheduler.request(this);
+                if (request == null) {
                     if (exitWhenComplete) {
                         return null;
                     } else {
@@ -122,13 +121,12 @@ public class Spider implements Runnable, Task {
                 }
             } else {
                 if(scheduler.waitNewUrl(threadPool, emptySleepTime)) {
-                    // if interrupted
                     return null;
                 }
                 return null;
             }
         }
-        return poll;
+        return request;
     }
 
     /**
@@ -337,19 +335,15 @@ public class Spider implements Runnable, Task {
         while (isRunning()){
             Request request = getNextRequest();
 
-            if(request == null){
-                continue;
-            }
+            if(request == null) continue;
+
 
             handleRequest(request);
 
         }
 
         shutdown();
-    }
-
-    /**
-     * @deprecated Use {@link #onError(Request, Exception)} instead.
+    }Re
      */
     @Deprecated
     protected void onError(Request request) {
