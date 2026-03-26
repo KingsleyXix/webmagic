@@ -39,9 +39,19 @@ public class SmartContentSelector implements Selector {
         int end;
         StringBuilder text = new StringBuilder();
 
+        List<String> lines = Arrays.asList(html.split("\n"));
+        int blocksWidth = 3;
+
         List<Integer> indexDistribution = computeIndexDistribution(lines, blocksWidth);
 
-        start = -1; end = -1;
+        return extractMainContent(lines, indexDistribution);
+    }
+
+    private String extractMainContent(List<String> lines, List<Integer> indexDistribution) {
+        int start;
+        int end;
+        start = -1;
+        end = -1;
         boolean boolstart = false, boolend = false;
         text.setLength(0);
 
