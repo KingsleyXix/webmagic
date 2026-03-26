@@ -38,18 +38,8 @@ public class SmartContentSelector implements Selector {
         int start;
         int end;
         StringBuilder text = new StringBuilder();
-        ArrayList<Integer> indexDistribution = new ArrayList<Integer>();
 
-        lines = Arrays.asList(html.split("\n"));
-
-        for (int i = 0; i < lines.size() - blocksWidth; i++) {
-            int wordsNum = 0;
-            for (int j = i; j < i + blocksWidth; j++) {
-                lines.set(j, lines.get(j).replaceAll("\\s+", ""));
-                wordsNum += lines.get(j).length();
-            }
-            indexDistribution.add(wordsNum);
-        }
+        List<Integer> indexDistribution = computeIndexDistribution(lines, blocksWidth);
 
         start = -1; end = -1;
         boolean boolstart = false, boolend = false;
@@ -87,6 +77,19 @@ public class SmartContentSelector implements Selector {
             }
         }
         return text.toString();
+    }
+
+    private List<Integer> computeIndexDistribution(List<String> lines, int blocksWidth){
+        List<Integer> indexDistribution = new ArrayList<Integer>();
+
+        for (int i = 0; i < lines.size() - blocksWidth; i++) {
+        int wordsNum = 0;
+            for (int j = i; j < i + blocksWidth; j++) {
+                lines.set(j, lines.get(j).replaceAll("\\s+", ""));
+                wordsNum += lines.get(j).length();
+            }
+            indexDistribution.add(wordsNum);
+        }
     }
 
     @Override
