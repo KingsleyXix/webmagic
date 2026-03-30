@@ -22,6 +22,7 @@ public class SmartContentSelector implements Selector {
     }
 
     public SmartContentSelector(int threshold) {
+
         this.threshold = threshold;
     }
 
