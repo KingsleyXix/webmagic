@@ -343,7 +343,7 @@ public class Spider implements Runnable, Task {
         }
 
         shutdown();
-    }Re
+    }
      */
     @Deprecated
     protected void onError(Request request) {
@@ -398,7 +398,7 @@ public class Spider implements Runnable, Task {
             }
         }
     }
-
+    // meth
     private void shutdown() {
         stat.set(STAT_STOPPED);
 

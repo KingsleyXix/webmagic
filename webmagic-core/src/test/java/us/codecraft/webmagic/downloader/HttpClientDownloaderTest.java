@@ -49,6 +49,7 @@ import static org.junit.Assert.assertTrue;
 public class HttpClientDownloaderTest {
 
     public static final String PAGE_ALWAYS_NOT_EXISTS = "http://localhost:13423/404";
+    private static final String CONTENT_TYPE = "Content-Type";
 
     @Test
     public void testDownloader() {
@@ -75,19 +76,19 @@ public class HttpClientDownloaderTest {
     @Test
     public void testGetHtmlCharset() throws Exception {
         HttpServer server = httpServer(13423);
-        server.get(by(uri("/header"))).response(header("Content-Type", "text/html; charset=gbk"));
+        server.get(by(uri("/header"))).response(header(CONTENT_TYPE, "text/html; charset=gbk"));
         server.get(by(uri("/meta4"))).response(with(text("<html>\n" +
                 "  <head>\n" +
                 "    <meta charset='gbk'/>\n" +
                 "  </head>\n" +
                 "  <body></body>\n" +
-                "</html>")),header("Content-Type","text/html; charset=gbk"));
+                "</html>")),header(CONTENT_TYPE,"text/html; charset=gbk"));
         server.get(by(uri("/meta5"))).response(with(text("<html>\n" +
                 "  <head>\n" +
                 "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=gbk\" />\n" +
                 "  </head>\n" +
                 "  <body></body>\n" +
-                "</html>")),header("Content-Type","text/html"));
+                "</html>")),header(CONTENT_TYPE,"text/html"));
         Runner.running(server, new Runnable() {
             @Override
             public void run() {
@@ -304,7 +305,7 @@ public class HttpClientDownloaderTest {
     @Test
     public void test_download_set_charset() throws Exception {
         HttpServer server = httpServer(13423);
-        server.response(header("Content-Type","text/html; charset=utf-8")).response("hello world!");
+        server.response(header(CONTENT_TYPE,"text/html; charset=utf-8")).response("hello world!");
         Runner.running(server, new Runnable() {
             @Override
             public void run() throws Exception {

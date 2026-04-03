@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="webmagic" target="11" />
+      <module name="webmagic-core" target="11" />
+      <module name="webmagic-coverage" target="11" />
+      <module name="webmagic-extension" target="11" />
+      <module name="webmagic-samples" target="11" />
+      <module name="webmagic-saxon" target="11" />
+      <module name="webmagic-scripts" target="11" />
+      <module name="webmagic-selenium" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
